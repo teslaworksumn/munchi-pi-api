@@ -8,7 +8,7 @@
         var powerstatus
         $("#submit").click(function(){
           powerstatus=$("#powerstatus").val()
-          $.post("http://localhost:3000/rpi/select",{powerstatus: powerstatus},
+          $.post("http://localhost:3000/rpi/select",{"powerstatus": powerstatus},
         function(data){
           if(data==='done')
           {

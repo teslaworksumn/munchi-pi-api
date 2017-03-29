@@ -9,33 +9,37 @@ var serialport = require('serialport'),
       parser: serialport.parsers.readline('\n')
     }
 
+var bodyParser = require('body-parser');
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
+var powerstatus = 'Y';
 
 app.get('/rpi', function (req, res) {
-  res.sendfile("index.html")
+  res.sendfile("index.html");
 })
 
 app.post('/rpi/select',function(req,res){
-  var powerstatus=req.body.powerstatus
-  res.end("yes")
+  powerstatus=req.body.powerstatus;
+  res.end("yes");
 })
 
 app.listen(3000, function () {
-  console.log('STARTED on port 3000!')
+  console.log('STARTED on port 3000!');
 })
 
-var myPort = new SerialPort(portName, portConfig)
+var myPort = new SerialPort(portName, portConfig);
 
-myPort.on('open', openPort)
+myPort.on('open', openPort);
 
 function openPort() {
-  console.log('port open')
-  console.log('baud rate: ' + myPort.options.baudRate)
+  console.log('port open');
+  console.log('baud rate: ' + myPort.options.baudRate);
 
   function sendData() {
-    myPort.write(powerstatus.toString())
-    console.log('Sending ' + powerstatus + ' out the serial port')
+    myPort.write(powerstatus.toString());
+    console.log('Sending ' + powerstatus + ' out the serial port');
   }
 
-  setInterval(sendData, 500)
+  setInterval(sendData, 500);
 }

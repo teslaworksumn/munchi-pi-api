@@ -9,6 +9,8 @@
   "author": "Munchi, Tesla Works",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.15.2"
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "serialport": "^4.0.7"
   }
 }
