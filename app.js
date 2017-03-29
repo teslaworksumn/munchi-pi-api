@@ -13,14 +13,13 @@ var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 
-var powerstatus = 'Y';
-
 app.get('/rpi', function (req, res) {
   res.sendfile("index.html");
 })
 
 app.post('/rpi/select',function(req,res){
-  powerstatus=req.body.powerstatus;
+  var status=req.body.powerstatus;
+  sendData(status);
   res.end("yes");
 })
 
@@ -32,14 +31,12 @@ var myPort = new SerialPort(portName, portConfig);
 
 myPort.on('open', openPort);
 
+function sendData(status) {
+    myPort.write(status.toString());
+    console.log('Sending ' + status + ' out the serial port');
+  }
+
 function openPort() {
   console.log('port open');
   console.log('baud rate: ' + myPort.options.baudRate);
-
-  function sendData() {
-    myPort.write(powerstatus.toString());
-    console.log('Sending ' + powerstatus + ' out the serial port');
-  }
-
-  setInterval(sendData, 500);
 }
