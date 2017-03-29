@@ -13,5 +13,13 @@
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
     "serialport": "^4.0.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/teslaworksumn/munchi-pi-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/teslaworksumn/munchi-pi-api/issues"
+  },
+  "homepage": "https://github.com/teslaworksumn/munchi-pi-api#readme"
 }

@@ -1,5 +1,9 @@
 var express = require('express')
 var app = express()
+var methodOverride = require('method-override');
+var cors = require('cors');
+app.use(cors({origin:true,credentials: true}));
+app.options('*', cors());
 var serialport = require('serialport'),
     SerialPort = serialport.SerialPort,
     portName = process.argv[2],
@@ -12,19 +16,28 @@ var serialport = require('serialport'),
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
+app.use(function(req,res,next){
+    req.header("Access-Control-Allow-Origin", "http://localhost:8100/#/Munchi:1");
+    req.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Origin", "http://localhost:8100/#/Munchi:1");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+app.use(methodOverride('X-HTTP-Method-Override')); 
 
-app.get('/rpi', function (req, res) {
-  res.sendfile("index.html");
-})
+// app.get('/rpi', function (req, res) {
+//   res.sendfile("index.html");
+// })
 
 app.post('/rpi/select',function(req,res){
-  var status=req.body.powerstatus;
+  var status=req.body.command;
+  console.log(status);
   sendData(status);
   res.end("yes");
 })
 
-app.listen(3000, function () {
-  console.log('STARTED on port 3000!');
+app.listen(5000, function () {
+  console.log('STARTED on port 5000!');
 })
 
 var myPort = new SerialPort(portName, portConfig);
