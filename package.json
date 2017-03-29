@@ -4,6 +4,7 @@
   "description": "Arduino Node",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js /dev/ttyACM0",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Munchi, Tesla Works",
