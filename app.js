@@ -33,7 +33,7 @@ app.use(function(req,res,next){
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
-app.use(methodOverride('X-HTTP-Method-Override')); 
+app.use(methodOverride('X-HTTP-Method-Override'));
 
 // app.get('/rpi', function (req, res) {
 //   res.sendfile("index.html");
@@ -41,13 +41,15 @@ app.use(methodOverride('X-HTTP-Method-Override'));
 
 app.post('/rpi/select',function(req,res){
   var status=req.body.command;
+  var desiredTemp=req.body.temp;
   if (status.err) {
     console.log(status.err);
   } else {
     console.log(status);
   }
-  var desiredTemp = 50;
-  var currTemp = 30;
+//  var desiredTemp = 50;
+  var currTemp = myPort.read();
+//  var currTemp = 30;
   var tolerance = 5;
   pid.setTarget(desiredTemp);
   let correction = pid.update(currTemp)
