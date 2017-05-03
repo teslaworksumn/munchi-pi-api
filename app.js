@@ -4,14 +4,6 @@ var methodOverride = require('method-override');
 var cors = require('cors');
 app.use(cors({origin:true,credentials: true}));
 app.options('*', cors());
-var serialport = require('serialport'),
-    SerialPort = serialport.SerialPort,
-    portName = process.argv[2],
-    portConfig = {
-      baudRate: 9600,
-      // call myPort.on('data') when a newline is received
-      parser: serialport.parsers.readline('\n')
-    }
 var PidController = require('node-pid-controller');
 var pid = new PidController({
   k_p: 0.25,
@@ -20,8 +12,11 @@ var pid = new PidController({
   dt: 1
 });
 
-var myPort = new SerialPort(portName, portConfig);
-myPort.on('open', openPort);
+var ads1x15 = require('node-ads1x15');
+var adc = new ads1x15(0);
+var channel = 0;
+var samplesPerSecond = '250';
+var progGainAmp = '4096';
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.json()); // support json encoded bodies
@@ -47,9 +42,16 @@ app.post('/rpi/select',function(req,res){
   } else {
     console.log(status);
   }
-//  var desiredTemp = 50;
-  var currTemp = myPort.read();
-//  var currTemp = 30;
+
+  var currTemp;
+  adc.readADCSingleEnded(channel, progGainAmp, samplesPerSecond, function(err, data) {   
+    if(err) {
+      console.log(err);
+      return;  
+    }
+    currTemp = data;
+  });
+
   var tolerance = 5;
   pid.setTarget(desiredTemp);
   let correction = pid.update(currTemp)
@@ -60,20 +62,10 @@ app.post('/rpi/select',function(req,res){
   } else {
     console.log("Good temp!");
   }
-  // sendData(status);
+
   res.end("yes");
 })
 
 app.listen(5000, function () {
   console.log('STARTED on port 5000!');
 })
-
-function sendData(status) {
-  myPort.write(status.toString());
-  console.log('Sending ' + status + ' out the serial port');
-}
-
-function openPort() {
-  console.log('port open');
-  console.log('baud rate: ' + myPort.options.baudRate);
-}
